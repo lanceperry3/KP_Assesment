@@ -4,7 +4,10 @@
 --they have an address , a phone number or both	
 
  
-WITH phn_addr AS -- Combine 
+WITH phn_addr AS 	-- Combine phn and addr tables to get home and work characters strings for each person 
+					-- Line Number and Usage type are not consistent between the tables 
+                    -- As a result I unioned the to tables and returned a distinct list 
+                    -- this provided a clean table to join back to 
  (
    SELECT DISTINCT * 
    FROM
@@ -36,6 +39,7 @@ WITH phn_addr AS -- Combine
 	WHERE lne_nb IS NOT NULL
 ),
 joined AS
+			--Join phn and addr tables back to the clean table using usage type
 (
 	SELECT 
 		pa.NAME 
@@ -45,10 +49,11 @@ joined AS
 		,addr.addr		AS ADDR
 		,pa.PRSN_IK
 	FROM 
-			phn_addr 	pa 		
-		LEFT JOIN PRSN_PHN	PHN	ON pa.hw = phn.USG_TYP 		AND pa.MAIN_PRSN_IK = phn.PRSN_IK
+		phn_addr 	pa 		
+		LEFT JOIN PRSN_PHN	PHN		ON pa.hw = phn.USG_TYP 		AND pa.MAIN_PRSN_IK = phn.PRSN_IK
 		LEFT JOIN PRSN_ADDR	ADDR	ON pa.hw = addr.addr_typ 	AND pa.MAIN_PRSN_IK = addr.PRSN_IK
 )
+-- Finally join the new table back to the PRSN table to get Jake and Anne who did not have a phn # or Addr
 SELECT 
 	p.NAME 
         ,p.MRN_NB 
@@ -62,9 +67,3 @@ SELECT
 FROM 
 	PRSN				P
         LEFT JOIN joined		j ON p.PRSN_IK = j.PRSN_IK
-        
-        
-        
-        
-        
-        
