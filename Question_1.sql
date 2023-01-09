@@ -1,7 +1,10 @@
-
+--Question 1:	
+--Write a query that returns all rows from PRSN table with it's corresponding phone number and address, 
+--if address or phone number is not available, display N/A, display a comment depending on whether 
+--they have an address , a phone number or both	
 
  
-WITH phn_addr AS 
+WITH phn_addr AS -- Combine 
  (
    SELECT DISTINCT * 
    FROM
